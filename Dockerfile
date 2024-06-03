@@ -1,5 +1,5 @@
 # Use the official Python image from the Docker Hub
-FROM python:3.9
+FROM python:3.12.3
 
 # Set environment variables for Python to run in unbuffered mode and to prevent Python from writing pyc files to disk
 ENV PYTHONUNBUFFERED 1
@@ -12,11 +12,8 @@ WORKDIR /app
 COPY requirements.txt /app/
 
 # Install the dependencies specified in requirements.txt
-# RUN pip install --upgrade pip \
-#     && pip install --no-cache-dir -r requirements.txt
-
 RUN pip install --upgrade pip
-RUN pip install -r requirements.txt
+RUN pip install --no-cache-dir -r requirements.txt
 
 # Copy the rest of your application code to the container
 COPY . /app/
