@@ -12,8 +12,11 @@ WORKDIR /app
 COPY requirements.txt /app/
 
 # Install the dependencies specified in requirements.txt
-RUN pip install --upgrade pip \
-    && pip install --no-cache-dir -r requirements.txt
+# RUN pip install --upgrade pip \
+#     && pip install --no-cache-dir -r requirements.txt
+
+RUN pip install --upgrade pip
+RUN pip install -r requirements.txt
 
 # Copy the rest of your application code to the container
 COPY . /app/
