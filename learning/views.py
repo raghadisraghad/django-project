@@ -67,37 +67,60 @@ def services(request):
 def contact(request):
 	return render(request, 'contact.html')
 
+
 def login_form(request):
-	return render(request, 'login.html')
+    if request.user.is_authenticated:
+        return redirect('home')
+    else:
+        return render(request, 'login.html')
+
 
 def logoutView(request):
 	logout(request)
 	return redirect('home')
 
 def loginView(request):
-	if request.method == 'POST':
-		username = request.POST['username']
-		password = request.POST['password']
-		user = authenticate(request, username=username, password=password)
-		if user is not None and user.is_active:
-			auth.login(request, user)
-			if user.is_admin or user.is_superuser:
-				return redirect('dashboard')
-			elif user.is_instructor:
-			    return redirect('instructor')
-			elif user.is_learner:
-			    return redirect('learner')
-			else:
-			    return redirect('login_form')
-		else:
-		    messages.info(request, "Invalid Username or Password")
-		    return redirect('login_form')
+    if request.user.is_authenticated:
+        if request.user.is_admin or request.user.is_superuser:
+            return redirect('dashboard')
+        elif request.user.is_instructor:
+            return redirect('instructor')
+        elif request.user.is_learner:
+            return redirect('learner')
+        else:
+            return redirect('login_form')
+
+    if request.method == 'POST':
+        # Process the login form
+        username = request.POST['username']
+        password = request.POST['password']
+        user = authenticate(request, username=username, password=password)
+        if user is not None and user.is_active:
+            login(request, user)
+            # Redirect based on role after successful login
+            if user.is_admin or user.is_superuser:
+                return redirect('dashboard')
+            elif user.is_instructor:
+                return redirect('instructor')
+            elif user.is_learner:
+                return redirect('learner')
+            else:
+                return redirect('login_form')
+        else:
+            messages.info(request, "Invalid Username or Password")
+            return redirect('login_form')
+
+    # If the request is not POST, render the login form
+    return render(request, 'login.html')
+
+
 
 
 
 
 
 # Admin Views
+@login_required
 def dashboard(request):
     learner = User.objects.filter(is_learner=True).count()
     instructor = User.objects.filter(is_instructor=True).count()
@@ -280,6 +303,7 @@ def auser_profile(request):
 
 
 # Instructor Views
+@login_required
 def home_instructor(request):
     learner = User.objects.filter(is_learner=True).count()
     instructor = User.objects.filter(is_instructor=True).count()
@@ -667,6 +691,7 @@ def update_file(request, pk):
 
 
 # Learner Views
+@login_required
 def home_learner(request):
     learner = User.objects.filter(is_learner=True).count()
     instructor = User.objects.filter(is_instructor=True).count()
@@ -691,7 +716,6 @@ class LearnerSignUpView(CreateView):
     def form_valid(self, form):
         user = form.save()
         login(self.request, user)
-        #return redirect('learner')
         return redirect('home')
 
 
