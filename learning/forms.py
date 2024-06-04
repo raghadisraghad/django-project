@@ -3,42 +3,14 @@ from django.contrib.auth.forms import UserCreationForm
 from django.db import transaction
 from django.forms.utils import ValidationError
 from django import forms
-
-from learning.models import (Answer, Question, Learner, LearnerAnswer,
-                              Course, User, Announcement)
-
-
-
+from learning.models import (Answer, Question, Learner, LearnerAnswer,Module, User, Announcement)
+from django.contrib.auth.forms import UserChangeForm
+from .models import User
 
 class PostForm(forms.ModelForm):
     class Meta:
         model = Announcement
         fields = ('content', )
-
-class ProfileForm(forms.ModelForm):
-    email=forms.EmailField(widget=forms.EmailInput())
-    confirm_email=forms.EmailField(widget=forms.EmailInput())
-
-    class Meta:
-        model = User
-        fields = [
-            'username',
-            'first_name',
-            'last_name',
-            'email',
-
-        ]
-
-    def clean(self):
-        cleaned_data = super(ProfileForm, self).clean()
-        email = cleaned_data.get("email")
-        confirm_email = cleaned_data.get("confirm_email")
-
-        if email != confirm_email:
-            raise forms.ValidationError(
-                "Emails must match!"
-            )
-
 
 
 class UserForm(forms.ModelForm):
@@ -48,6 +20,12 @@ class UserForm(forms.ModelForm):
 
 
 class InstructorSignUpForm(UserCreationForm):
+    interests = forms.ModelChoiceField(
+        queryset=Module.objects.all(),
+        widget=forms.Select,
+        required=True
+    )
+
     class Meta(UserCreationForm.Meta):
         model = User
 
@@ -65,10 +43,9 @@ class InstructorSignUpForm(UserCreationForm):
         return user
 
 
-
 class LearnerSignUpForm(UserCreationForm):
     interests = forms.ModelMultipleChoiceField(
-        queryset=Course.objects.all(),
+        queryset=Module.objects.all(),
         widget=forms.CheckboxSelectMultiple,
         required=True
     )
@@ -153,3 +130,18 @@ class LearnerCourse(forms.ModelForm):
         learner = Learner()
         learner.interests.add(*self.cleaned_data.get('interests'))
         return learner_id
+
+class CustomUserChangeForm(UserChangeForm):
+    class Meta:
+        model = User
+        fields = ('username', 'first_name', 'last_name', 'email', 'phonenumber', 'avatar')
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.fields['username'].widget.attrs.update({'class': 'form-control'})
+        self.fields['first_name'].widget.attrs.update({'class': 'form-control'})
+        self.fields['last_name'].widget.attrs.update({'class': 'form-control'})
+        self.fields['email'].widget.attrs.update({'class': 'form-control'})
+        self.fields['phonenumber'].widget.attrs.update({'class': 'form-control'})
+        self.fields['avatar'].widget.attrs.update({'class': 'form-control-file'})
+        self.fields['password'].widget.attrs.update({'class': 'form-control', 'type': 'password'})

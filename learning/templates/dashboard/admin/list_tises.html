@@ -39,14 +39,14 @@
                       </tr>
                     </thead>
                     <tbody>
-                      {% if tises %}
-                      {% for tise in tises %}
+                      {% if Annoncements %}
+                      {% for annonce in Annoncements %}
 
                       <tr>
-                        <td>{{ tise.id }}</td>
-                        <td>{{ tise.content }}</td>
+                        <td>{{ annonce.id }}</td>
+                        <td>{{ annonce.content }}</td>
                         <td>
-                          <a href="{% url 'adpost' tise.pk %}"><button type="button" class="btn btn-danger">
+                          <a href="{% url 'deleteannonce' annonce.pk %}"><button type="button" class="btn btn-danger">
                               Delete</button></a>
                         </td>
                       </tr>
