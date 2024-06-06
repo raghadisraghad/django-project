@@ -1,54 +1,38 @@
 {% extends 'dashboard/instructor/base.html' %}
 
-
-
 {% block body %}
 
-<div class="container-fluid">
-    <div class="row">
-
-        <div class="col-sm-6" style="padding-top: 10px;">
-            <div class="card">
+<div id="content-wrapper" class="d-flex justify-content-center align-items-center"
+    style="min-height: 100vh; background-color: #f8f9fa;">
+    <div class="container">
+        <button class="btn btn-success mb-3" onclick="window.location.href='{% url 'instructorallannonce' %}'"
+            style="background-color: #0f5132;">Back</button>
+        <div class="card mb-3" style="max-width: 600px; margin: auto;">
+            <div class="card-header" style="background-color: #0f5132; color: white;">
+                <i class="fas fa-table"></i>
+                Post New Announcement
             </div>
-
-
-            <div class="card mb-2">
-                <div class="card-body">
-
-                    <div class="row" style="background-color: #999965">
-                        <div class="card col-sm-12">
-                            <div class="card-header text-primary">
-                                <center>Post New Announcement</center>
-                            </div>
-                        </div>
-
-                        <div class="col-sm-8">
-                            <div class="myform">
-                                <form method="POST">
-                                    {% csrf_token %}
-                                    {{ form.as_p }}
-
-                                    <br><input type="submit" value="Post" class="btn btn-primary">
-                                </form>
-                            </div>
-
-                            <div class="col-sm-4"></div>
-                        </div>
-
-
-                    </div>
+            <div class="card-body">
+                {% for message in messages %}
+                <div class="alert alert-{{ message.tags }} alert-dismissible" role="alert">
+                    {{ message }}
                 </div>
+                {% endfor %}
+                <form method="POST">
+                    {% csrf_token %}
+                    <form method="POST">
+                        {% csrf_token %}
+                        <div class="form-group">
+                            <label for="id_content">Announcement</label>
+                            <input type="text" class="form-control" id="id_content" name="content"
+                                placeholder="Type your announcement here..." required autofocus>
+                        </div>
+                        <button type="submit" class="btn btn-primary" style="background-color: #0f5132;">Post</button>
+                    </form>
+                </form>
             </div>
-
         </div>
-
-
-
-        <div class="col-sm-2" style="color: red">
-        </div>
-
     </div>
 </div>
 
-
-{% endblock body %}
+{% endblock %}

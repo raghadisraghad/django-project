@@ -1,41 +1,48 @@
-from django.shortcuts import redirect, render
+from django.shortcuts import get_object_or_404, redirect, render
 from django.contrib import messages
-from django.contrib.auth import logout,login, authenticate ,authenticate
 from django.views.generic.edit import CreateView
-from ..forms import CustomUserChangeForm,TakeQuizForm, LearnerSignUpForm, InstructorSignUpForm, QuestionForm, BaseAnswerInlineFormSet, LearnerInterestsForm, LearnerCourse, UserForm, PostForm
+from ..forms import CustomUserChangeForm, LearnerSignUpForm, InstructorSignUpForm, PostForm
 from ..models import User,Module,Announcement
-from django.views.generic import ListView, DetailView 
+from django.views.generic import ListView 
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.urls import reverse_lazy
-from django.views.generic.edit import CreateView, UpdateView, DeleteView
+from django.views.generic.edit import CreateView, DeleteView
 from django.contrib.messages.views import SuccessMessageMixin
 from django.utils import timezone
+from django.contrib.auth.hashers import make_password
+from django.contrib.auth import update_session_auth_hash
+from django.contrib.auth.forms import PasswordChangeForm
 
 
 def dashboard(request):
-    if not request.user.is_admin:
+    if not (request.user.is_admin or request.user.is_superuser):
         return redirect('home')
-    learner = User.objects.filter(is_learner=True).count()
-    instructor = User.objects.filter(is_instructor=True).count()
-    module = Module.objects.all().count()
-    users = User.objects.all().count()
-    context = {'learner':learner, 'module':module, 'instructor':instructor, 'users':users}
-
-    return render(request, 'dashboard/admin/home.html', context)
+    return render(request, 'dashboard/admin/home.html')
 
 def course(request):
-    if not request.user.is_admin:
+    if not (request.user.is_admin or request.user.is_superuser):
         return redirect('home')
+    
     if request.method == 'POST':
         name = request.POST['name']
         color = request.POST['color']
 
         a = Module(name=name, color=color)
         a.save()
-        messages.success(request, 'New Course Was Registed Successfully')
+        messages.success(request, 'New Course Was Registered Successfully')
         return redirect('course')
     else:
-        return render(request, 'dashboard/admin/course.html')
+        courses = Module.objects.all()
+        return render(request, 'dashboard/admin/course.html', {'courses': courses})
+
+def DeleteCourse(request, course_id):
+    if not (request.user.is_admin or request.user.is_superuser):
+        return redirect('home')
+
+    course = get_object_or_404(Module, id=course_id)
+    course.delete()
+    messages.success(request, 'Course was deleted successfully')
+    return redirect('course')
 
 class InstructorSignUpView(CreateView):
     model = User
@@ -52,7 +59,7 @@ class InstructorSignUpView(CreateView):
         return redirect('addinstructor')
 
     def dispatch(self, request, *args, **kwargs):
-        if not request.user.is_admin:
+        if not (request.user.is_admin or request.user.is_superuser):
             return redirect('home')
         return super().dispatch(request, *args, **kwargs)
     
@@ -74,7 +81,7 @@ class AdminLearner(CreateView):
     
     
     def dispatch(self, request, *args, **kwargs):
-        if not request.user.is_admin:
+        if not (request.user.is_admin or request.user.is_superuser):
             return redirect('home')
         return super().dispatch(request, *args, **kwargs)
     
@@ -90,19 +97,19 @@ class ListUserView(LoginRequiredMixin, ListView):
         return User.objects.order_by('-id')
 
     def dispatch(self, request, *args, **kwargs):
-        if not request.user.is_admin:
+        if not (request.user.is_admin or request.user.is_superuser):
             return redirect('home')
         return super().dispatch(request, *args, **kwargs)
     
 
 class AdminDeleteAnnonce(SuccessMessageMixin, DeleteView):
     model = Announcement
-    template_name = 'dashboard/admin/confirm_delete.html'
-    success_url = reverse_lazy('adminListAnnonce')
+    template_name = 'dashboard/admin/tise_list.html'
+    success_url = reverse_lazy('allannonce')
     success_message = "Announcement Was Deleted Successfully"
 
     def dispatch(self, request, *args, **kwargs):
-        if not request.user.is_admin:
+        if not (request.user.is_admin or request.user.is_superuser):
             return redirect('home')
         return super().dispatch(request, *args, **kwargs)
     
@@ -116,7 +123,7 @@ class AdminAllAnnonce(LoginRequiredMixin, ListView):
         return Announcement.objects.filter(posted_at__lt=timezone.now()).order_by('posted_at')
 
     def dispatch(self, request, *args, **kwargs):
-        if not request.user.is_admin:
+        if not (request.user.is_admin or request.user.is_superuser):
             return redirect('home')
         return super().dispatch(request, *args, **kwargs)
     
@@ -134,38 +141,23 @@ class AdminCreateAnnonce(CreateView):
         return super().form_valid(form)
     
     def dispatch(self, request, *args, **kwargs):
-        if not request.user.is_admin:
-            return redirect('home')
-        return super().dispatch(request, *args, **kwargs)
-
-class ListAllAnnonce(LoginRequiredMixin, ListView):
-    model = Announcement
-    template_name = 'dashboard/admin/list_tises.html'
-    context_object_name = 'Annoncements'
-    paginated_by = 10
-
-
-    def get_queryset(self):
-        return Announcement.objects.order_by('-id')
-    
-    def dispatch(self, request, *args, **kwargs):
-        if not request.user.is_admin:
+        if not (request.user.is_admin or request.user.is_superuser):
             return redirect('home')
         return super().dispatch(request, *args, **kwargs)
     
 class AdminDeleteUser(SuccessMessageMixin, DeleteView):
     model = User
-    template_name = 'dashboard/admin/confirm_delete2.html'
+    template_name = 'dashboard/admin/list_users.html'
     success_url = reverse_lazy('allusers')
     success_message = "User Was Deleted Successfully"
 
     def dispatch(self, request, *args, **kwargs):
-        if not request.user.is_admin:
+        if not (request.user.is_admin or request.user.is_superuser):
             return redirect('home')
         return super().dispatch(request, *args, **kwargs)
 
 def AdminProfile(request):
-    if not request.user.is_admin:
+    if not (request.user.is_admin or request.user.is_superuser):
         return redirect('home')
     if request.method == 'POST':
         form = CustomUserChangeForm(request.POST, instance=request.user)
@@ -175,3 +167,76 @@ def AdminProfile(request):
     else:
         form = CustomUserChangeForm(instance=request.user)
     return render(request, 'dashboard/admin/user_profile.html', {'form': form})
+
+def promote_to_admin(request):
+    if not (request.user.is_admin or request.user.is_superuser):
+        return redirect('home')
+    if request.method == 'POST':
+        user_id = request.POST.get('user_id')
+        user = User.objects.get(id=user_id)
+        user.is_admin = True
+        user.save()
+        messages.success(request, f"{user.username} has been promoted to admin.")
+        return redirect('allusers')
+    
+def remove_admin(request):
+    if not (request.user.is_admin or request.user.is_superuser):
+        return redirect('home')
+    if request.method == 'POST':
+        try:
+            user_id = request.POST.get('user_id')
+            user = User.objects.get(id=user_id)
+            user.is_admin = False
+            user.save()
+            messages.success(request, f"{user.username} has been removed as an admin.")
+            return redirect('allusers')
+        except User.DoesNotExist:
+            messages.error(request, "User not found.")
+    return redirect('allusers')
+
+def create_user_form(request):
+    if not (request.user.is_admin or request.user.is_superuser):
+        return redirect('home')
+    users = User.objects.all()
+    
+    context = {
+        'users': users
+    }
+    
+    return render(request, 'dashboard/admin/add_user.html', context)
+
+
+def create_user(request):
+    if not (request.user.is_admin or request.user.is_superuser):
+        return redirect('home')
+    if request.method == 'POST':
+        first_name = request.POST['first_name']
+        last_name = request.POST['last_name']
+        username = request.POST['username']
+        email = request.POST['email']
+        password = request.POST['password']
+        password = make_password(password)
+
+        a = User(first_name=first_name, last_name=last_name, username=username, password=password, email=email, is_admin=True)
+        a.save()
+        messages.success(request, 'Admin Was Created Successfully')
+        return redirect('allusers')
+    else:
+        messages.error(request, 'Admin Was Not Created Successfully')
+        return redirect('create_user_form')
+
+
+def UpdatePassword(request):
+    if not (request.user.is_admin or request.user.is_superuser):
+        return redirect('home')
+    
+    if request.method == 'POST':
+        form = PasswordChangeForm(request.user, request.POST)
+        if form.is_valid():
+            user = form.save()
+            update_session_auth_hash(request, user)
+            return redirect('adminprofile')
+    else:
+        form = PasswordChangeForm(request.user)
+    
+    return render(request, 'user_profile.html', {'form': form})

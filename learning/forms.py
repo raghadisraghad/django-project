@@ -34,7 +34,8 @@ class InstructorSignUpForm(UserCreationForm):
 
             for fieldname in ['username', 'password1', 'password2']:
                 self.fields[fieldname].help_text = None
-                    
+                 
+    @transaction.atomic   
     def save(self, commit=True):
         user = super().save(commit=False)
         user.is_instructor = True
@@ -132,9 +133,11 @@ class LearnerCourse(forms.ModelForm):
         return learner_id
 
 class CustomUserChangeForm(UserChangeForm):
+    password = forms.CharField(widget=forms.PasswordInput(attrs={'class': 'form-control'}))
+
     class Meta:
         model = User
-        fields = ('username', 'first_name', 'last_name', 'email', 'phonenumber', 'avatar')
+        fields = ('username', 'first_name', 'last_name', 'email', 'phonenumber', 'avatar', 'password')
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
@@ -144,4 +147,3 @@ class CustomUserChangeForm(UserChangeForm):
         self.fields['email'].widget.attrs.update({'class': 'form-control'})
         self.fields['phonenumber'].widget.attrs.update({'class': 'form-control'})
         self.fields['avatar'].widget.attrs.update({'class': 'form-control-file'})
-        self.fields['password'].widget.attrs.update({'class': 'form-control', 'type': 'password'})
