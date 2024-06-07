@@ -2,7 +2,7 @@ from django.shortcuts import redirect, render
 from django.contrib import messages
 from django.contrib.auth import logout,login, authenticate ,authenticate
 from django.views.generic.edit import CreateView
-from ..forms import TakeQuizForm, LearnerSignUpForm, InstructorSignUpForm, QuestionForm, BaseAnswerInlineFormSet, LearnerInterestsForm, LearnerCourse, UserForm, PostForm
+from ..forms import LearnerSignUpForm
 from ..models import User
 
 # Shared Views
