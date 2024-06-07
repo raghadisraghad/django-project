@@ -2,7 +2,7 @@ from django.shortcuts import get_object_or_404, redirect, render
 from django.contrib import messages
 from django.views.generic.edit import CreateView
 from ..forms import CustomUserChangeForm, LearnerSignUpForm, InstructorSignUpForm, PostForm
-from ..models import User,Module,Announcement
+from ..models import User,Course,Announcement
 from django.views.generic import ListView 
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.urls import reverse_lazy
@@ -27,19 +27,19 @@ def course(request):
         name = request.POST['name']
         color = request.POST['color']
 
-        a = Module(name=name, color=color)
+        a = Course(name=name, color=color)
         a.save()
         messages.success(request, 'New Course Was Registered Successfully')
         return redirect('course')
     else:
-        courses = Module.objects.all()
+        courses = Course.objects.all()
         return render(request, 'dashboard/admin/course.html', {'courses': courses})
 
 def DeleteCourse(request, course_id):
     if not (request.user.is_admin or request.user.is_superuser):
         return redirect('home')
 
-    course = get_object_or_404(Module, id=course_id)
+    course = get_object_or_404(Course, id=course_id)
     course.delete()
     messages.success(request, 'Course was deleted successfully')
     return redirect('course')

@@ -25,7 +25,7 @@ class Announcement(models.Model):
         return str(self.content)
 
 
-class Module(models.Model):
+class Course(models.Model):
     name = models.CharField(max_length=30)
     color = models.CharField(max_length=7, default='#007bff')
 
@@ -43,7 +43,7 @@ class Tutorial(models.Model):
     title = models.CharField(max_length=50)
     content = models.TextField()
     thumb = models.ImageField(upload_to='media', null=True, blank=True)
-    module = models.ForeignKey(Module, on_delete=models.CASCADE, default='')
+    course = models.ForeignKey(Course, on_delete=models.CASCADE, default='')
     created_at = models.DateTimeField(auto_now_add=True)
     user = models.ForeignKey(User, on_delete=models.CASCADE)
     video = EmbedVideoField(blank=True, null=True)
@@ -53,9 +53,8 @@ class Notes(models.Model):
     title = models.CharField(max_length=500)
     file = models.FileField(upload_to='media', null=True, blank=True)
     cover = models.ImageField(upload_to='media', null=True, blank=True)
-    module = models.ForeignKey(Module, on_delete=models.CASCADE)
+    course = models.ForeignKey(Course, on_delete=models.CASCADE)
     user = models.ForeignKey(User, on_delete=models.CASCADE)
-
 
     def __str__(self):
         return self.title
@@ -65,12 +64,11 @@ class Notes(models.Model):
         self.cover.delete()
         super().delete(*args, **kwargs)    
 
-  
 
 class Quiz(models.Model):
     owner = models.ForeignKey(User, on_delete=models.CASCADE, related_name='quizzes')
     name = models.CharField(max_length=255)
-    module = models.ForeignKey(Module, on_delete=models.CASCADE, related_name='quizzes')
+    course = models.ForeignKey(Course, on_delete=models.CASCADE, related_name='quizzes')
 
     def __str__(self):
         return self.name
@@ -96,7 +94,7 @@ class Answer(models.Model):
 class Learner(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE, primary_key=True)
     quizzes = models.ManyToManyField(Quiz, through='TakenQuiz')
-    interests = models.ManyToManyField(Module, related_name='interested_learners')
+    interests = models.ManyToManyField(Course, related_name='interested_learners')
 
     def get_unanswered_questions(self, quiz):
         answered_questions = self.quiz_answers \
@@ -112,7 +110,7 @@ class Learner(models.Model):
 
 class Instructor(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE)
-    interest = models.ManyToManyField(Module, related_name="more_locations")
+    interest = models.ManyToManyField(Course, related_name="more_locations")
 
 
 class TakenQuiz(models.Model):

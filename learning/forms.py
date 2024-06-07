@@ -3,7 +3,7 @@ from django.contrib.auth.forms import UserCreationForm
 from django.db import transaction
 from django.forms.utils import ValidationError
 from django import forms
-from learning.models import (Answer, Question, Learner, LearnerAnswer,Module, User, Announcement)
+from learning.models import (Answer, Question, Learner, LearnerAnswer,Course, User, Announcement)
 from django.contrib.auth.forms import UserChangeForm
 from .models import User
 
@@ -21,7 +21,7 @@ class UserForm(forms.ModelForm):
 
 class InstructorSignUpForm(UserCreationForm):
     interests = forms.ModelChoiceField(
-        queryset=Module.objects.all(),
+        queryset=Course.objects.all(),
         widget=forms.Select,
         required=True
     )
@@ -46,7 +46,7 @@ class InstructorSignUpForm(UserCreationForm):
 
 class LearnerSignUpForm(UserCreationForm):
     interests = forms.ModelMultipleChoiceField(
-        queryset=Module.objects.all(),
+        queryset=Course.objects.all(),
         widget=forms.CheckboxSelectMultiple,
         required=True
     )
@@ -133,11 +133,11 @@ class LearnerCourse(forms.ModelForm):
         return learner_id
 
 class CustomUserChangeForm(UserChangeForm):
-    password = forms.CharField(widget=forms.PasswordInput(attrs={'class': 'form-control'}))
+    # password = forms.CharField(widget=forms.PasswordInput(attrs={'class': 'form-control'}))
 
     class Meta:
         model = User
-        fields = ('username', 'first_name', 'last_name', 'email', 'phonenumber', 'avatar', 'password')
+        fields = ('username', 'first_name', 'last_name', 'email', 'phonenumber', 'avatar')
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
