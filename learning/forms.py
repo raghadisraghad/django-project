@@ -3,7 +3,7 @@ from django.contrib.auth.forms import UserCreationForm
 from django.db import transaction
 from django.forms.utils import ValidationError
 from django import forms
-from learning.models import (Answer, Question, Learner, LearnerAnswer,Course, User, Announcement)
+from learning.models import (Answer, Question, Learner, LearnerAnswer,Course, User, Announcement,Tutorial)
 from django.contrib.auth.forms import UserChangeForm
 from .models import User
 
@@ -12,6 +12,10 @@ class PostForm(forms.ModelForm):
         model = Announcement
         fields = ('content', )
 
+class TutorialForm(forms.ModelForm):
+    class Meta:
+        model = Tutorial
+        fields = ['title', 'content', 'thumb', 'course', 'video']
 
 class UserForm(forms.ModelForm):
     class Meta:

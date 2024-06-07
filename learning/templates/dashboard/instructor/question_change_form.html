@@ -1,17 +1,10 @@
 {% extends 'dashboard/instructor/base.html' %}
-
-
 {% load crispy_forms_tags crispy_forms_filters %}
 
 {% block body %}
-<div class="container-fluid" style="padding-top: 20px">
+<div class="container-fluid" style="background-color: #343a40; padding-top: 20px;">
   <!-- Breadcrumbs-->
-  <ol class="breadcrumb">
-    <li class="breadcrumb-item">
-      <a href="#" style="color: #999965; font-weight: bold; letter-spacing: 10px">Learning Management System</a>
-    </li>
-  </ol>
-  <div class="card mb-3">
+  <div class="card mb-3" style="background-color: #454d55; color: white;">
     <div class="card-body">
       <nav aria-label="breadcrumb">
         <ol class="breadcrumb">
@@ -25,7 +18,8 @@
         {% csrf_token %}
         {{ formset.management_form }}
         {{ form|crispy }}
-        <div class="card mb-3{% if formset.errors %} border-danger{% endif %}">
+        <div class="card mb-3{% if formset.errors %} border-danger{% endif %}"
+          style="background-color: #343a40; color: white;">
           <div class="card-header">
             <div class="row">
               <div class="col-8">
@@ -77,5 +71,4 @@
     </div>
   </div>
 </div>
-
 {% endblock body %}

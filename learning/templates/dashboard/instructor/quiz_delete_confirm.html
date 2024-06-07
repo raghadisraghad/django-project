@@ -1,22 +1,21 @@
 {% extends 'dashboard/instructor/base.html' %}
-
-
 {% load crispy_forms_tags %}
 
 {% block body %}
-<div class="container-fluid" style="padding-top: 20px">
+<div class="container-fluid" style="background-color: #343a40; padding-top: 20px;">
   <!-- Breadcrumbs-->
   <ol class="breadcrumb">
     <li class="breadcrumb-item">
-      <a href="#" style="color: #999965; font-weight: bold; letter-spacing: 10px">Learning Management System</a>
+      <a href="#" style="color: white; font-weight: bold; letter-spacing: 10px">Learning Management System</a>
     </li>
   </ol>
-  <div class="card mb-3">
+  <div class="card mb-3" style="background-color: #454d55; color: white;">
     <div class="card-body">
       <nav aria-label="breadcrumb">
         <ol class="breadcrumb">
-          <li class="breadcrumb-item"><a href="{% url 'quiz_change_list' %}">My Quizzes</a></li>
-          <li class="breadcrumb-item"><a href="{% url 'quiz_change' quiz.pk %}">{{ quiz.name }}</a></li>
+          <li class="breadcrumb-item"><a href="{% url 'quiz_change_list' %}" style="color: white;">My Quizzes</a></li>
+          <li class="breadcrumb-item"><a href="{% url 'quiz_change' quiz.pk %}" style="color: white;">
+              {{ quiz.name}}</a></li>
           <li class="breadcrumb-item active" aria-current="page">Confirm deletion</li>
         </ol>
       </nav>
@@ -32,8 +31,4 @@
     </div>
   </div>
 </div>
-</div>
-</div>
-</div>
-
 {% endblock body %}

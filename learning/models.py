@@ -12,7 +12,7 @@ class User(AbstractUser):
     is_learner = models.BooleanField(default=False)
     is_instructor = models.BooleanField(default=False)
     is_admin = models.BooleanField(default=False)
-    avatar = models.ImageField(upload_to='media', default = 'media/lufy.png', blank=True)
+    avatar = models.ImageField(upload_to='media/', default = 'media/lufy.png', blank=True)
 
 
 class Announcement(models.Model):
@@ -42,7 +42,7 @@ class Course(models.Model):
 class Tutorial(models.Model):
     title = models.CharField(max_length=50)
     content = models.TextField()
-    thumb = models.ImageField(upload_to='media', null=True, blank=True)
+    thumb = models.ImageField(upload_to='media/', null=True, blank=True)
     course = models.ForeignKey(Course, on_delete=models.CASCADE, default='')
     created_at = models.DateTimeField(auto_now_add=True)
     user = models.ForeignKey(User, on_delete=models.CASCADE)
@@ -51,8 +51,8 @@ class Tutorial(models.Model):
 
 class Notes(models.Model):
     title = models.CharField(max_length=500)
-    file = models.FileField(upload_to='media', null=True, blank=True)
-    cover = models.ImageField(upload_to='media', null=True, blank=True)
+    file = models.FileField(upload_to='media/', null=True, blank=True)
+    cover = models.ImageField(upload_to='media/', null=True, blank=True)
     course = models.ForeignKey(Course, on_delete=models.CASCADE)
     user = models.ForeignKey(User, on_delete=models.CASCADE)
 

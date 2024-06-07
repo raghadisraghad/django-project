@@ -40,31 +40,33 @@ path('instructor/', login_required(instructor.home_instructor), name='instructor
 path('annonce/', login_required(instructor.InstructorCreateAnnonce.as_view()), name='annonce'),
 path('instructorallannonce/', login_required(instructor.InstructorAllAnnonce.as_view()), name='instructorallannonce'),
 path('quiz_add/', login_required(instructor.QuizCreateView.as_view()), name='quiz_add'),
+path('llist_quiz/', login_required(instructor.QuizListView.as_view()), name='quiz_change_list'),
 path('question_add/<int:pk>', login_required(instructor.question_add), name='question_add'),
 path('quiz/<int:quiz_pk>/<int:question_pk>/', login_required(instructor.question_change), name='question_change'),
-path('llist_quiz/', login_required(instructor.QuizListView.as_view()), name='quiz_change_list'),
 path('quiz/<int:quiz_pk>/question/<int:question_pk>/delete/', login_required(instructor.QuestionDeleteView.as_view()), name='question_delete'),
 path('quiz/<int:pk>/results/', login_required(instructor.QuizResultsView.as_view()), name='quiz_results'),
 path('quiz/<int:pk>/delete/', login_required(instructor.QuizDeleteView.as_view()), name='quiz_delete'),
 path('quizupdate/<int:pk>/', login_required(instructor.QuizUpdateView.as_view()), name='quiz_change'),
-path('ipost/', login_required(instructor.CreatePost.as_view()), name='ipost'),
-path('llchat/', login_required(instructor.TiseList.as_view()), name='llchat'),
 path('tutorial/', login_required(instructor.tutorial), name='tutorial'),
+path('tutorial/<int:tutorial_id>/delete/', login_required(instructor.deleteTutorial), name='deleteTutorial'),
+path('listnotes/', login_required(instructor.LNotesList.as_view()), name='lnotes'),
+path('iadd_notes/', login_required(instructor.iadd_notes), name='iadd_notes'),  
+path('update_file/<int:pk>', login_required(instructor.update_file), name='update_file'),
+path('publish_notes/', login_required(instructor.publish_notes), name='publish_notes'),
 path('post/', login_required(instructor.publish_tutorial),name='publish_tutorial'),
 path('itutorial/', login_required(instructor.itutorial),name='itutorial'),
-path('itutorials/<int:pk>/', login_required(instructor.ITutorialDetail.as_view()), name = "itutorial-detail"),
-path('listnotes/', login_required(instructor.LNotesList.as_view()), name='lnotes'),
-path('iadd_notes/', login_required(instructor.iadd_notes), name='iadd_notes'),
-path('publish_notes/', login_required(instructor.publish_notes), name='publish_notes'),
-path('update_file/<int:pk>', login_required(instructor.update_file), name='update_file'),
 path('instructorprofile/', login_required(instructor.InstructorProfile), name='instructorprofile'),
 path('updatepassword/', login_required(instructor.UpdatePassword), name='updatepassword'),
 
 
 
-
 # # Learner URl's
 path('learner/', login_required(learner.home_learner),name='learner'),
+path('learnerallannonce/', login_required(learner.LearnerAllAnnonce.as_view()), name='learnerallannonce'),
+
+
+path('learnerprofile/', login_required(learner.LearnerProfile), name='learnerprofile'),
+path('learnerupdatepassword/', login_required(learner.LearnerUpdatePassword), name='learnerupdatepassword'),
 # path('ltutorial/', login_required(learner.ltutorial),name='ltutorial'),
 # path('llistnotes/', login_required(learner.LLNotesList.as_view()), name='llnotes'),
 # path('ilchat/', login_required(learner.ITiseList.as_view()), name='ilchat'),

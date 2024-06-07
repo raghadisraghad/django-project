@@ -1,16 +1,9 @@
 {% extends 'dashboard/instructor/base.html' %}
-
-
 {% load crispy_forms_tags %}
 {% block body %}
-<div class="container-fluid" style="padding-top: 20px">
+<div class="container-fluid" style="background-color: #343a40; padding-top: 20px;">
     <!-- Breadcrumbs-->
-    <ol class="breadcrumb">
-        <li class="breadcrumb-item">
-            <a href="#" style="color: #999965; font-weight: bold; letter-spacing: 10px">Learning Management System</a>
-        </li>
-    </ol>
-    <div class="card mb-3">
+    <div class="card mb-3" style="background-color: #454d55; color: white;">
         <div class="card-body">
             {% for message in messages %}
             <div class="alert alert-{{ message.tags }} alert-dismissible" role="alert">
@@ -38,8 +31,4 @@
         </div>
     </div>
 </div>
-</div>
-</div>
-</div>
-
 {% endblock body %}

@@ -1,23 +1,16 @@
 {% extends 'dashboard/instructor/base.html' %}
-
 {% load crispy_forms_tags humanize %}
 
-
-
 {% block body %}
-<div class="container-fluid" style="padding-top: 20px">
+<div class="container-fluid" style="background-color: #343a40; padding-top: 20px;">
   <!-- Breadcrumbs-->
-  <ol class="breadcrumb">
-    <li class="breadcrumb-item">
-      <a href="#" style="color: #999965; font-weight: bold; letter-spacing: 10px">Learning Management System</a>
-    </li>
-  </ol>
-  <div class="card mb-3">
+  <div class="card mb-3" style="background-color: #454d55; color: white;">
     <div class="card-body">
       <nav aria-label="breadcrumb">
         <ol class="breadcrumb">
-          <li class="breadcrumb-item"><a href="{% url 'quiz_change_list' %}">My Quizzes</a></li>
-          <li class="breadcrumb-item"><a href="{% url 'quiz_change' quiz.pk %}">{{ quiz.name }}</a></li>
+          <li class="breadcrumb-item"><a href="{% url 'quiz_change_list' %}" style="color: black;">My Quizzes</a></li>
+          <li class="breadcrumb-item"><a href="{% url 'quiz_change' quiz.pk %}" style="color: black;">
+              {{ quiz.name}}</a></li>
           <li class="breadcrumb-item active" aria-current="page">Results</li>
         </ol>
       </nav>
@@ -25,7 +18,7 @@
 
       <div class="card">
         <div class="card-header">
-          <strong>Taken Quizzes</strong>
+          <strong style="color: black;">Taken Quizzes</strong>
           <span class="badge badge-pill badge-primary float-right">Average Score: {{
             quiz_score.average_score|default_if_none:0.0 }}</span>
         </div>
@@ -55,8 +48,4 @@
     </div>
   </div>
 </div>
-</div>
-</div>
-</div>
-
 {% endblock body %}

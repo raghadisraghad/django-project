@@ -1,16 +1,13 @@
 {% extends 'dashboard/instructor/base.html' %}
 
-
 {% block body %}
-<div class="container-fluid">
-  <div class="row">
-    <div class="col-12 mb-3">
+<div class="container-fluid" style="background-color: #343a40; padding: 20px;">
+  <div class="row justify-content-center">
+    <div class="col-md-8 mb-3">
       <div class="col-12 mb-3">
-
-
         <div id="content-wrapper" style="padding-top: 20px">
           <div class="container-fluid">
-            <div class="card mb-3">
+            <div class="card mb-3" style="background-color: #454d55; color: white;">
               <div class="card-header">
                 <i class="fas fa-table text-primary"></i>
                 List of Quiz
@@ -22,12 +19,6 @@
                 </div>
                 {% endfor %}
                 <div class="col-sm-12">
-
-                  <nav aria-label="breadcrumb">
-                    <ol class="breadcrumb">
-                      <li class="breadcrumb-item active" aria-current="page">My Quizzes</li>
-                    </ol>
-                  </nav>
                   <h2 class="mb-3">My Quizzes</h2>
                   <a href="{% url 'quiz_add' %}" class="btn btn-primary mb-3" role="button">Add quiz</a>
                   <div class="card">
@@ -61,9 +52,13 @@
                       </tbody>
                     </table>
                   </div>
-
-
-
-
-
-                  {% endblock body %}
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock body %}
