@@ -1,3 +1,4 @@
+from django.http import JsonResponse
 from django.shortcuts import get_object_or_404, redirect, render
 from django.contrib import messages
 from django.urls import reverse_lazy
@@ -9,11 +10,13 @@ from django.urls import reverse
 from django.utils import timezone
 from django.db.models import Avg, Count
 from django.forms import inlineformset_factory
-from ..models import Quiz, Question, Course, Notes, Announcement,Tutorial
+from ..models import Answer, Quiz, Question, Course, Notes, Announcement,Tutorial
 from django.db import transaction
 from django.core.files.storage import FileSystemStorage
 from django.contrib.auth import update_session_auth_hash
 from django.contrib.auth.forms import PasswordChangeForm
+from django.views.decorators.csrf import csrf_exempt
+from django.views import View
 
 
 def home_instructor(request):
@@ -27,7 +30,7 @@ class InstructorAllAnnonce(LoginRequiredMixin, ListView):
     template_name = 'dashboard/instructor/tise_list.html'
 
     def get_queryset(self):
-        return Announcement.objects.filter(posted_at__lt=timezone.now()).order_by('posted_at')
+        return Announcement.objects.filter(posted_at__lt=timezone.now()).order_by('-posted_at')
 
     def dispatch(self, request, *args, **kwargs):
         if not request.user.is_instructor:
@@ -57,14 +60,13 @@ class QuizCreateView(CreateView):
     fields = ('name', 'course')
     template_name = 'dashboard/Instructor/quiz_add_form.html'
 
-
     def form_valid(self, form):
         quiz = form.save(commit=False)
         quiz.owner = self.request.user
         quiz.save()
         messages.success(self.request, 'Quiz created, Go A Head And Add Questions')
         return redirect('quiz_change', quiz.pk)
-    
+
     def dispatch(self, request, *args, **kwargs):
         if not request.user.is_instructor:
             return redirect('home')
@@ -94,25 +96,23 @@ class QuizUpateView(UpdateView):
         return super().dispatch(request, *args, **kwargs)
         
 
-def question_add(request, pk):
-    if not request.user.is_instructor:
-        return redirect('home')
-    quiz = get_object_or_404(Quiz, pk=pk, owner=request.user)
+# def question_add(request, pk):
+#     if not request.user.is_instructor:
+#         return redirect('home')
+#     quiz = get_object_or_404(Quiz, pk=pk, owner=request.user)
 
-    if request.method == 'POST':
-        form = QuestionForm(request.POST)
-        if form.is_valid():
-            question = form.save(commit=False)
-            question.quiz = quiz
-            question.save()
-            messages.success(request, 'You may now add answers/options to the question.')
-            return redirect('question_change', quiz.pk, question.pk)
-    else:
-        form = QuestionForm()
+#     if request.method == 'POST':
+#         form = QuestionForm(request.POST)
+#         if form.is_valid():
+#             question = form.save(commit=False)
+#             question.quiz = quiz
+#             question.save()
+#             messages.success(request, 'You may now add answers/options to the question.')
+#             return redirect('question_change', quiz.pk, question.pk)
+#     else:
+#         form = QuestionForm()
 
-    return render(request, 'dashboard/instructor/question_add_form.html', {'quiz': quiz, 'form': form})
-
-
+#     return render(request, 'dashboard/instructor/question_add_form.html', {'quiz': quiz, 'form': form})
 
 
 def question_change(request, quiz_pk, question_pk):
@@ -499,3 +499,26 @@ def UpdatePassword(request):
         form = PasswordChangeForm(request.user)
     
     return render(request, 'user_profile.html', {'form': form})
+
+    
+@csrf_exempt
+def ClearNotification(request):
+    user = request.user
+    user.profile.new_announcements_count = 0
+    user.profile.save()
+    return JsonResponse({'status': 'success'})
+
+class Notification(View):
+    def get(self, request, *args, **kwargs):
+        last_check_time = request.user.last_announcements_check
+        
+        new_announcements = Announcement.objects.filter(posted_at__gt=last_check_time)
+        
+        request.user.last_announcements_check = timezone.now()
+        request.user.save()
+        
+        data = {
+            'count': new_announcements.count(),
+            'announcements': list(new_announcements.values('user', 'content', 'posted_at'))
+        }
+        return JsonResponse(data)

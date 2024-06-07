@@ -45,7 +45,7 @@
                       {% for user in users %}
                       <tr>
                         <td>{{ user.id }}</td>
-                        <td><img src="{{ user.avatar }}" alt="{{ user.username }}" class="img-thumbnail"
+                        <td><img src="{{ user.avatar.url }}" alt="{{ user.username }}" class="img-thumbnail"
                             style="height: 100px; width: 100px;"></td>
                         <td>{{ user.username }}</td>
                         <td>{{ user.first_name }}</td>

@@ -15,7 +15,7 @@
                         <div class="card mb-3">
                             <div class="card-header">
                                 <i class="fas fa-table text-primary"></i>
-                                Please Select Course For Learning
+                                Update Course You're Interestered
                             </div>
                             <div class="card-body">
                                 {% for message in messages %}
@@ -23,8 +23,6 @@
                                     {{ message }}
                                 </div>
                                 {% endfor %}
-
-                                <h2 class="mb-3">Update Course You're Interestered</h2>
                                 <form method="post" novalidate>
                                     {% csrf_token %}
                                     {{ form|crispy }}

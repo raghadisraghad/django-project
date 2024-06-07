@@ -1,45 +1,93 @@
 {% extends 'dashboard/learner/base.html' %}
 
-
-
 {% load static %}
+
+{% block stylesheet %}
+<style>
+  .card-container {
+    display: flex;
+    justify-content: center;
+    align-items: flex-start;
+    /* Align items at the start */
+    flex-wrap: wrap;
+    /* Enable wrapping for responsive layout */
+    margin-top: 20px;
+    /* Add margin for spacing */
+  }
+
+  .card {
+    background-color: #2c3e50;
+    color: #ecf0f1;
+    margin-bottom: 30px;
+    border: none;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    width: 300px;
+    height: 400px;
+    padding: 20px;
+    margin: 30px;
+    /* Right margin */
+    /* Additional padding */
+  }
+
+  .card-title {
+    color: #1abc9c;
+    font-size: 24px;
+    margin-bottom: 20px;
+    text-align: center;
+  }
+
+  .card img {
+    width: 100%;
+    height: auto;
+    object-fit: cover;
+    border-radius: 5px;
+    margin-bottom: 20px;
+  }
+
+  .card-body {
+    text-align: center;
+  }
+
+  .card-text {
+    color: #bdc3c7;
+    margin-bottom: 20px;
+    text-align: center;
+  }
+
+  .card-footer {
+    background-color: #34495e;
+    color: #bdc3c7;
+    border-top: none;
+    text-align: center;
+  }
+
+  .pagination {
+    justify-content: center;
+    margin-top: 30px;
+  }
+</style>
+{% endblock %}
+
 {% block body %}
-
-
-<!-- Blog Entries Column -->
-<div class="col-md-8">
+<div class="card-container">
+  <!-- Blog Entries Column -->
   {% for tutorial in tutorials %}
-
-  <h1 class="my-4">
-    <small></small>
-  </h1>
-
-  <!-- Blog Post -->
-  <div class="card mb-4">
-    <h2 class="card-title text-primary">{{ tutorial.course.name }} - {{ tutorial.title }}</h2>
-
+  <div class="card">
+    <h2 class="card-title"><b>{{ tutorial.title }}</b> | Course: {{ tutorial.course.name }}</h2>
     {% if tutorial.thumb %}
-    <img src="{{ tutorial.thumb.url }}" alt="{{ tutorial.title }}" style="width:400px; height: 400px">
+    <img src="{{ tutorial.thumb.url }}" alt="{{ tutorial.title }}">
     {% else %}
-    <p></p>
+    <p>No image available</p>
     {% endif %}
     <div class="card-body">
-      <p class="card-text">{{ tutorial.content | truncatechars:100 }}</p>
       <a href="{% url 'tutorial-detail' tutorial.pk %}" class="btn btn-primary">Read More &rarr;</a>
     </div>
-    <div class="card-footer text-muted">
-      Posted on {{ tutorial.created_at }} by
-      <a href="#">{{ tutorial.user.username }}</a>
-    </div>
   </div>
-
-
   {% endfor %}
-
 
   {% if is_paginated %}
   <!-- Pagination -->
-  <ul class="pagination justify-content-center mb-4">
+  <ul class="pagination">
     {% if page_obj.has_previous %}
     <li class="page-item">
       <a class="page-link" href="?page={{ page_obj.previous_page_number }}">&larr; Previous page</a>
@@ -53,6 +101,5 @@
     {% endif %}
   </ul>
   {% endif %}
-
 </div>
 {% endblock %}

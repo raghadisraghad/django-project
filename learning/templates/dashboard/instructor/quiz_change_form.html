@@ -20,7 +20,6 @@
         <form method="post" novalidate>
           {% csrf_token %}
           {{ form|crispy }}
-          <button type="submit" class="btn btn-success">Save changes</button>
           <a href="{% url 'quiz_change_list' %}" class="btn btn-outline-secondary" role="button">Nevermind</a>
           <a href="{% url 'quiz_delete' quiz.pk %}" class="btn btn-danger float-right">Delete</a>
         </form>
@@ -34,6 +33,9 @@
             </div>
             <div class="col-sm-6">
               <strong style="color: black;">Answers</strong>
+            </div>
+            <div class="col-sm-6">
+              <a href="{% url 'question_add' quiz.pk %}" class="btn btn-primary btn-sm">Add question</a>
             </div>
           </div>
         </div>
@@ -55,9 +57,6 @@
                 href="{% url 'question_add' quiz.pk %}" style="color: black;">add the first question</a>.</p>
           </div>
           {% endfor %}
-        </div>
-        <div class="card-footer">
-          <a href="{% url 'question_add' quiz.pk %}" class="btn btn-primary btn-sm">Add question</a>
         </div>
       </div>
     </div>

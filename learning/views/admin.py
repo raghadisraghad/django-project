@@ -1,3 +1,4 @@
+from django.http import JsonResponse
 from django.shortcuts import get_object_or_404, redirect, render
 from django.contrib import messages
 from django.views.generic.edit import CreateView
@@ -12,6 +13,9 @@ from django.utils import timezone
 from django.contrib.auth.hashers import make_password
 from django.contrib.auth import update_session_auth_hash
 from django.contrib.auth.forms import PasswordChangeForm
+from django.views.decorators.csrf import csrf_exempt
+from django.views import View
+
 
 
 def dashboard(request):
@@ -120,7 +124,7 @@ class AdminAllAnnonce(LoginRequiredMixin, ListView):
 
 
     def get_queryset(self):
-        return Announcement.objects.filter(posted_at__lt=timezone.now()).order_by('posted_at')
+        return Announcement.objects.filter(posted_at__lt=timezone.now()).order_by('-posted_at')
 
     def dispatch(self, request, *args, **kwargs):
         if not (request.user.is_admin or request.user.is_superuser):
@@ -240,3 +244,26 @@ def UpdatePassword(request):
         form = PasswordChangeForm(request.user)
     
     return render(request, 'user_profile.html', {'form': form})
+
+    
+@csrf_exempt
+def ClearNotification(request):
+    user = request.user
+    user.profile.new_announcements_count = 0
+    user.profile.save()
+    return JsonResponse({'status': 'success'})
+
+class Notification(View):
+    def get(self, request, *args, **kwargs):
+        last_check_time = request.user.last_announcements_check
+        
+        new_announcements = Announcement.objects.filter(posted_at__gt=last_check_time)
+        
+        request.user.last_announcements_check = timezone.now()
+        request.user.save()
+        
+        data = {
+            'count': new_announcements.count(),
+            'announcements': list(new_announcements.values('user', 'content', 'posted_at'))
+        }
+        return JsonResponse(data)

@@ -1,3 +1,4 @@
+from django.utils import timezone
 from django.contrib.auth.models import AbstractUser
 from django.db import models
 from django.utils.html import escape, mark_safe
@@ -13,6 +14,7 @@ class User(AbstractUser):
     is_instructor = models.BooleanField(default=False)
     is_admin = models.BooleanField(default=False)
     avatar = models.ImageField(upload_to='media/', default = 'media/lufy.png', blank=True)
+    last_announcements_check = models.DateTimeField(default=timezone.now)
 
 
 class Announcement(models.Model):
