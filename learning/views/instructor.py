@@ -64,7 +64,6 @@ class QuizCreateView(CreateView):
         quiz = form.save(commit=False)
         quiz.owner = self.request.user
         quiz.save()
-        messages.success(self.request, 'Quiz created, Go A Head And Add Questions')
         return redirect('quiz_change', quiz.pk)
 
     def dispatch(self, request, *args, **kwargs):
